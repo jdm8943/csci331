@@ -1,11 +1,13 @@
 import java.io.*;
 import java.util.*;
+import java.nio.file.Paths;
 
 
 public class Search {
 
-        private final static String CITY_FILE = "city.dat";
-        private final static String EDGE_FILE = "edge.dat";
+        private static String abs_path;
+        private final static String CITY_FILE = "\\proj01\\city.dat";
+        private final static String EDGE_FILE = "\\proj01\\edge.dat";
         private static String input_file = "stdin";
         private static String out_file = "stdout";
         private static HashMap<City,ArrayList<City>> city_graph;
@@ -44,12 +46,14 @@ public class Search {
         }
 
         public static void main(String[] args) {
+                abs_path = new File(".").getAbsolutePath();
                 HashMap<String, City> cities;
                 try {
-                        cities = parse_cities(CITY_FILE);
+                        cities = parse_cities(abs_path + CITY_FILE.trim());
                         System.out.println(cities.values());
-                        city_graph = parse_graph(EDGE_FILE, cities);
+                        city_graph = parse_graph(abs_path + EDGE_FILE.trim(), cities);
                         System.out.println(city_graph);
+                        System.out.println(city_graph.get(cities.get("Boston")));
 
                 } catch (FileNotFoundException e) {
                         // TODO Auto-generated catch block
