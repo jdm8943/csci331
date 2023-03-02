@@ -5,7 +5,8 @@ public class City {
         private String abbrev;
         private double lat;
         private double lon;
-        public City(String name, String abbrev, double lat, double lon){
+
+        public City(String name, String abbrev, double lat, double lon) {
                 this.name = name;
                 this.abbrev = abbrev;
                 this.lat = lat;
@@ -66,13 +67,14 @@ public class City {
 
         @Override
         public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof City)) {
-            return false;
-        }
-        City city = (City) o;
-        return Objects.equals(name, city.name) && Objects.equals(abbrev, city.abbrev) && lat == city.lat && lon == city.lon;
+                if (o == this)
+                        return true;
+                if (!(o instanceof City)) {
+                        return false;
+                }
+                City city = (City) o;
+                return Objects.equals(name, city.name) && Objects.equals(abbrev, city.abbrev) && lat == city.lat
+                                && lon == city.lon;
         }
 
         @Override
@@ -83,11 +85,11 @@ public class City {
         @Override
         public String toString() {
                 return "{" +
-                        " name='" + getName() + "'" +
-                        ", abbrev='" + getAbbrev() + "'" +
-                        ", lat='" + getLat() + "'" +
-                        ", lon='" + getLon() + "'" +
-                        "}";
+                                " name='" + getName() + "'" +
+                                ", abbrev='" + getAbbrev() + "'" +
+                                ", lat='" + getLat() + "'" +
+                                ", lon='" + getLon() + "'" +
+                                "}";
         }
-        
+
 }
