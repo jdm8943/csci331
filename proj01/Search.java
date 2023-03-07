@@ -109,6 +109,48 @@ public class Search {
                 return path;
         }
 
+        private static ArrayList<City> dfs(City start, City dest) {
+                Stack<City> stack = new Stack<City>();
+                HashMap<City, City> closed = new HashMap<City, City>();
+                boolean success = false;
+                stack.add(start);
+                while (!stack.isEmpty()) {
+                        City node = stack.pop();
+                        // System.out.print(node.getName() + " ");
+                        if (node.equals(dest)) {
+                                success = true;
+                                break;
+                        } else {
+                                ArrayList<City> neighbors = city_graph.get(node);
+                                
+                                for (City neighbor : neighbors) {
+                                        if (!closed.containsKey(neighbor)) {
+                                                closed.put(neighbor, node);
+                                                if (neighbor.equals(dest)) {
+                                                        success = true;
+                                                        break;
+                                                } else {
+                                                        if (!stack.contains(neighbor)) {
+                                                                stack.add(neighbor);
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
+
+                ArrayList<City> path = new ArrayList<City>();
+                if (success) {
+                        City current = dest;
+                        while (!current.equals(start)) {
+                                path.add(current);
+                                current = closed.get(current);
+                        }
+                        path.add(start);
+                }
+                return path;
+        }
+
         // java comparator?
 
         // class distanceComparator implements Comparator<City> {
@@ -133,6 +175,11 @@ public class Search {
                 // bfs
                 ArrayList<City> bfsResult = bfs(cities.get("Denver"), cities.get("Boston"));
                 for (City c : bfsResult) {
+                        System.out.println(c);
+                }
+                System.out.println();
+                ArrayList<City> dfsResult = dfs(cities.get("Denver"), cities.get("Boston"));
+                for (City c : dfsResult) {
                         System.out.println(c);
                 }
         }
