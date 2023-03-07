@@ -131,7 +131,7 @@ public class Search {
                                                         break;
                                                 } else {
                                                         if (!stack.contains(neighbor)) {
-                                                                stack.add(neighbor);
+                                                                stack.push(neighbor);
                                                         }
                                                 }
                                         }
