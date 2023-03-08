@@ -5,13 +5,34 @@ public class City {
         private String abbrev;
         private double lat;
         private double lon;
+        private double f;
+        private double g;
 
-        public City(String name, String abbrev, double lat, double lon) {
+        public City(String name, String abbrev, double lat, double lon, double f,double g) {
                 this.name = name;
                 this.abbrev = abbrev;
                 this.lat = lat;
                 this.lon = lon;
+                this.g = g;
+                this.f = f;
         }
+
+        public double getF() {
+                return this.f;
+        }
+
+        public void setF(double f) {
+                this.f = f;
+        }
+
+        public double getG() {
+                return this.g;
+        }
+
+        public void setG(double g) {
+                this.g = g;
+        }
+
 
         public String getName() {
                 return this.name;

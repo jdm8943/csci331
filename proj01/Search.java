@@ -19,8 +19,11 @@ public class Search {
                                         in.next(), // name
                                         in.next(), // abbrev
                                         Double.parseDouble(in.next()), // lat
-                                        Double.parseDouble(in.next()) // lon
+                                        Double.parseDouble(in.next()), // lon
+                                        0,
+                                        0
                         );
+                        city.setH(find_distance(city, city))
                         cities.put(city.getName(), city);
                 }
                 in.close();
@@ -149,6 +152,64 @@ public class Search {
                         path.add(0, start);
                 }
                 return path;
+        }
+
+        private static ArrayList<City> astar(City start, City dest) {
+                PriorityQueue<City> open = new PriorityQueue<City>(
+                        new Comparator<City>(){
+                                public int compare(City a, City b){
+                                        return (int)(a.getF() - b.getF());
+                                }
+                        }
+                );
+                HashMap<City, City> closed = new HashMap<City, City>();
+                boolean success = false;
+                open.add(start);
+                while (!open.isEmpty()) {
+                        City node = open.remove();
+                        // System.out.print(node.getName() + " ");
+                        if (node.equals(dest)) {
+                                success = true;
+                                break;
+                        } else {
+                                ArrayList<City> neighbors = getNeighbors(node, dest);
+                                neighbors.sort(
+                                                (a, b) -> (int)(a.getF() - b.getF()));
+                                for (City neighbor : neighbors) {
+                                        if (!closed.containsKey(neighbor)) {
+                                                closed.put(neighbor, node);
+                                                if (neighbor.equals(dest)) {
+                                                        success = true;
+                                                        break;
+                                                } else {
+                                                        if (!open.contains(neighbor)) {
+                                                                open.add(neighbor);
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
+
+                ArrayList<City> path = new ArrayList<City>();
+                if (success) {
+                        City current = dest;
+                        while (!current.equals(start)) {
+                                path.add(0, current);
+                                current = closed.get(current);
+                        }
+                        path.add(0, start);
+                }
+                return path;
+        }
+
+        private static  ArrayList<City> getNeighbors(City node, City dest) {
+                ArrayList<City> neighbors = city_graph.get(node);
+                for (City c : neighbors){
+                        c.setG(node.getG() + find_distance(node, c));
+                        c.setF(c.getG() + find_distance(c, dest));
+                }
+                return neighbors;
         }
 
         // java comparator?
