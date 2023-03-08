@@ -39,8 +39,7 @@ public class Search {
                         } else {
                                 ArrayList<City> neighbors = new ArrayList<>();
                                 neighbors.add(city2);
-                                neighbors.sort(
-                                                (a, b) -> a.getName().compareTo(b.getName()));
+                                
                                 graph.put(city1, neighbors);
                         }
                         if (graph.containsKey(city2)) {
@@ -48,8 +47,6 @@ public class Search {
                         } else {
                                 ArrayList<City> neighbors = new ArrayList<>();
                                 neighbors.add(city1);
-                                neighbors.sort(
-                                                (a, b) -> a.getName().compareTo(b.getName()));
                                 graph.put(city2, neighbors);
                         }
                 }
@@ -58,8 +55,8 @@ public class Search {
                 return graph;
         }
 
-        private static double find_distance(double lat1, double lat2, double lon1, double lon2) {
-                double distance = Math.sqrt((lat1 - lat2) * (lat1 - lat2) + (lon1 - lon2) * (lon1 - lon2)) * 100;
+        private static double find_distance(City a, City b) {
+                double distance = Math.sqrt(Math.pow((a.getLat() - b.getLat()), 2)  + Math.pow((a.getLon() - b.getLon()), 2)) * 100;
                 return distance;
         }
 
@@ -81,6 +78,8 @@ public class Search {
                                 break;
                         } else {
                                 ArrayList<City> neighbors = city_graph.get(node);
+                                neighbors.sort(
+                                                (a, b) -> a.getName().compareTo(b.getName()));
                                 for (City neighbor : neighbors) {
                                         if (!closed.containsKey(neighbor)) {
                                                 closed.put(neighbor, node);
@@ -101,10 +100,10 @@ public class Search {
                 if (success) {
                         City current = dest;
                         while (!current.equals(start)) {
-                                path.add(current);
+                                path.add(0, current);
                                 current = closed.get(current);
                         }
-                        path.add(start);
+                        path.add(0, start);
                 }
                 return path;
         }
@@ -113,7 +112,7 @@ public class Search {
                 Stack<City> stack = new Stack<City>();
                 HashMap<City, City> closed = new HashMap<City, City>();
                 boolean success = false;
-                stack.add(start);
+                stack.push(start);
                 while (!stack.isEmpty()) {
                         City node = stack.pop();
                         // System.out.print(node.getName() + " ");
@@ -122,7 +121,8 @@ public class Search {
                                 break;
                         } else {
                                 ArrayList<City> neighbors = city_graph.get(node);
-                                
+                                neighbors.sort(
+                                                (a, b) -> b.getName().compareTo(a.getName()));
                                 for (City neighbor : neighbors) {
                                         if (!closed.containsKey(neighbor)) {
                                                 closed.put(neighbor, node);
@@ -143,10 +143,10 @@ public class Search {
                 if (success) {
                         City current = dest;
                         while (!current.equals(start)) {
-                                path.add(current);
+                                path.add(0, current);
                                 current = closed.get(current);
                         }
-                        path.add(start);
+                        path.add(0, start);
                 }
                 return path;
         }
