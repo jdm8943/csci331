@@ -80,7 +80,7 @@ public class Search {
                                 success = true;
                                 break;
                         } else {
-                                ArrayList<City> neighbors = city_graph.get(node);
+                                ArrayList<City> neighbors = getNeighbors(node, dest);
                                 neighbors.sort(
                                                 (a, b) -> a.getName().compareTo(b.getName()));
                                 for (City neighbor : neighbors) {
@@ -123,7 +123,7 @@ public class Search {
                                 success = true;
                                 break;
                         } else {
-                                ArrayList<City> neighbors = city_graph.get(node);
+                                ArrayList<City> neighbors = getNeighbors(node, dest);
                                 neighbors.sort(
                                                 (a, b) -> b.getName().compareTo(a.getName()));
                                 for (City neighbor : neighbors) {
@@ -229,21 +229,24 @@ public class Search {
                         System.err.println("Usage: java Search inputFile outputFile");
                         System.exit(0);
                 }
-                String input = args[0];
-                String output = args[1];
-
-                if (input.equals("-")){
-                        input = "stdin";
-                }
-                if (output.equals("-")){
-                        output= "stdout";
-                }
+                
 
                 String start = "";
                 String dest = "";
 
-                try( Scanner in = new Scanner(new File(input));
-                     BufferedWriter out = new BufferedWriter(new FileWriter(new File(output)))){
+                try {
+                        Scanner in;
+                        BufferedWriter out;
+                        if (!args[0].equals("-")){
+                                in = new Scanner(new File(abs_path + "\\proj01\\" + args[0]));
+                        } else {
+                                in = new Scanner(System.in);
+                        }
+                        if (!args[1].equals("-")){
+                                out = new BufferedWriter(new FileWriter((new File(abs_path + "\\proj01\\" + args[1]))));
+                        } else {
+                                out = new BufferedWriter(new OutputStreamWriter(System.out));
+                        }
                         start = in.next();
                         dest = in.next();
                         ArrayList<City> bfsResult = new ArrayList<>();
@@ -261,7 +264,21 @@ public class Search {
                                 dfsResult = dfs(cities.get(start), cities.get(dest));
                                 astarResult = astar(cities.get(start), cities.get(dest));
                         }
-                        
+
+                        out.write("Breadth-First Search Results:");
+                        out.newLine();
+                        out.flush();
+                        for (City c : bfsResult){
+                                out.write(c.getName());
+                                out.newLine();
+                                out.flush();
+                        }
+                        out.write("That took "+ (bfsResult.size()-1) +" hops to find.");
+                        out.newLine();
+                        out.write("Total Distance = " + bfsResult.get(bfsResult.size()-1).getG() + " miles.");
+                        out.newLine();
+                        out.flush();
+
 
                 } catch (IOException e) {
                         System.err.println(e.getMessage());
