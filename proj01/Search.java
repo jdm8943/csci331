@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.nio.file.Paths;
 
@@ -220,22 +221,66 @@ public class Search {
                         // System.out.println(city_graph);
                         // System.out.println(city_graph.get(cities.get("Boston")));
                 } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        System.err.println(e.getMessage());
+                        // e.printStackTrace();
+                        System.exit(0);
                 }
-                // bfs
-                ArrayList<City> bfsResult = bfs(cities.get("Denver"), cities.get("Boston"));
-                for (City c : bfsResult) {
-                        System.out.println(c);
+                if (Array.getLength(args) < 2){
+                        System.err.println("Usage: java Search inputFile outputFile");
+                        System.exit(0);
                 }
-                System.out.println();
-                ArrayList<City> dfsResult = dfs(cities.get("Denver"), cities.get("Boston"));
-                for (City c : dfsResult) {
-                        System.out.println(c);
+                String input = args[0];
+                String output = args[1];
+
+                if (input.equals("-")){
+                        input = "stdin";
                 }
-                System.out.println();
-                ArrayList<City> astarResult = astar(cities.get("Denver"), cities.get("Boston"));
-                for (City c : astarResult) {
-                        System.out.println(c);
+                if (output.equals("-")){
+                        output= "stdout";
                 }
+
+                String start = "";
+                String dest = "";
+
+                try( Scanner in = new Scanner(new File(input));
+                     BufferedWriter out = new BufferedWriter(new FileWriter(new File(output)))){
+                        start = in.next();
+                        dest = in.next();
+                        ArrayList<City> bfsResult = new ArrayList<>();
+                        ArrayList<City> dfsResult = new ArrayList<>();
+                        ArrayList<City> astarResult = new ArrayList<>();
+
+                        if (!cities.containsKey(start)){
+                                System.err.println("No such city: "+start+"");
+                                System.exit(0);
+                        } else if (!cities.containsKey(dest)){
+                                System.err.println("No such city: "+dest+"");
+                                System.exit(0);
+                        } else {
+                                bfsResult = bfs(cities.get(start), cities.get(dest));
+                                dfsResult = dfs(cities.get(start), cities.get(dest));
+                                astarResult = astar(cities.get(start), cities.get(dest));
+                        }
+                        
+
+                } catch (IOException e) {
+                        System.err.println(e.getMessage());
+                        // e.printStackTrace();
+                }
+
+                // ArrayList<City> bfsResult = bfs(cities.get("Denver"), cities.get("Boston"));
+                // for (City c : bfsResult) {
+                //         System.out.println(c);
+                // }
+                // System.out.println();
+                // ArrayList<City> dfsResult = dfs(cities.get("Denver"), cities.get("Boston"));
+                // for (City c : dfsResult) {
+                //         System.out.println(c);
+                // }
+                // System.out.println();
+                // ArrayList<City> astarResult = astar(cities.get("Denver"), cities.get("Boston"));
+                // for (City c : astarResult) {
+                //         System.out.println(c);
+                // }
         }
 }
