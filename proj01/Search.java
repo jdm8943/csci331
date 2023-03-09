@@ -21,9 +21,7 @@ public class Search {
                                         Double.parseDouble(in.next()), // lat
                                         Double.parseDouble(in.next()), // lon
                                         0,
-                                        0
-                        );
-                        city.setH(find_distance(city, city))
+                                        0);
                         cities.put(city.getName(), city);
                 }
                 in.close();
@@ -42,7 +40,7 @@ public class Search {
                         } else {
                                 ArrayList<City> neighbors = new ArrayList<>();
                                 neighbors.add(city2);
-                                
+
                                 graph.put(city1, neighbors);
                         }
                         if (graph.containsKey(city2)) {
@@ -59,7 +57,8 @@ public class Search {
         }
 
         private static double find_distance(City a, City b) {
-                double distance = Math.sqrt(Math.pow((a.getLat() - b.getLat()), 2)  + Math.pow((a.getLon() - b.getLon()), 2)) * 100;
+                double distance = Math.sqrt(
+                                Math.pow((a.getLat() - b.getLat()), 2) + Math.pow((a.getLon() - b.getLon()), 2)) * 100;
                 return distance;
         }
 
@@ -156,12 +155,11 @@ public class Search {
 
         private static ArrayList<City> astar(City start, City dest) {
                 PriorityQueue<City> open = new PriorityQueue<City>(
-                        new Comparator<City>(){
-                                public int compare(City a, City b){
-                                        return (int)(a.getF() - b.getF());
-                                }
-                        }
-                );
+                                new Comparator<City>() {
+                                        public int compare(City a, City b) {
+                                                return (int) (a.getF() - b.getF());
+                                        }
+                                });
                 HashMap<City, City> closed = new HashMap<City, City>();
                 boolean success = false;
                 open.add(start);
@@ -174,7 +172,7 @@ public class Search {
                         } else {
                                 ArrayList<City> neighbors = getNeighbors(node, dest);
                                 neighbors.sort(
-                                                (a, b) -> (int)(a.getF() - b.getF()));
+                                                (a, b) -> (int) (a.getF() - b.getF()));
                                 for (City neighbor : neighbors) {
                                         if (!closed.containsKey(neighbor)) {
                                                 closed.put(neighbor, node);
@@ -203,23 +201,14 @@ public class Search {
                 return path;
         }
 
-        private static  ArrayList<City> getNeighbors(City node, City dest) {
+        private static ArrayList<City> getNeighbors(City node, City dest) {
                 ArrayList<City> neighbors = city_graph.get(node);
-                for (City c : neighbors){
+                for (City c : neighbors) {
                         c.setG(node.getG() + find_distance(node, c));
                         c.setF(c.getG() + find_distance(c, dest));
                 }
                 return neighbors;
         }
-
-        // java comparator?
-
-        // class distanceComparator implements Comparator<City> {
-        // @Override
-        // public int compare(City a, City b) {
-        // return a.name.compareToIgnoreCase(b.name);
-        // }
-        // }
 
         public static void main(String[] args) {
                 abs_path = new File(".").getAbsolutePath();
@@ -241,6 +230,11 @@ public class Search {
                 System.out.println();
                 ArrayList<City> dfsResult = dfs(cities.get("Denver"), cities.get("Boston"));
                 for (City c : dfsResult) {
+                        System.out.println(c);
+                }
+                System.out.println();
+                ArrayList<City> astarResult = astar(cities.get("Denver"), cities.get("Boston"));
+                for (City c : astarResult) {
                         System.out.println(c);
                 }
         }
