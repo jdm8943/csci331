@@ -13,6 +13,13 @@
         },
         {
             "type": "java",
+            "name": "Launch with Args",
+            "request": "launch",
+            "mainClass": "Search",
+            "args": ["in1","-"]
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

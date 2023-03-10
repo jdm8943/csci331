@@ -1,15 +1,12 @@
 import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
-import java.nio.file.Paths;
 
 public class Search {
 
         private static String abs_path;
         private final static String CITY_FILE = "\\proj01\\city.dat";
         private final static String EDGE_FILE = "\\proj01\\edge.dat";
-        private static String input_file = "stdin";
-        private static String out_file = "stdout";
         private static HashMap<City, ArrayList<City>> city_graph;
 
         private static HashMap<String, City> parse_cities(String fn) throws FileNotFoundException {
@@ -59,13 +56,9 @@ public class Search {
 
         private static double find_distance(City a, City b) {
                 double distance = Math.sqrt(
-                                Math.pow((a.getLat() - b.getLat()), 2) + Math.pow((a.getLon() - b.getLon()), 2)) * 100;
+                                (a.getLat() - b.getLat()) *(a.getLat() - b.getLat()) +
+                                (a.getLon() - b.getLon()) *(a.getLon() - b.getLon())) * 100;
                 return distance;
-        }
-
-        private static double calculate_f(City city) {
-                double fn = 0;
-                return fn;
         }
 
         private static ArrayList<City> bfs(City start, City dest) {
@@ -80,7 +73,7 @@ public class Search {
                                 success = true;
                                 break;
                         } else {
-                                ArrayList<City> neighbors = getNeighbors(node, dest);
+                                ArrayList<City> neighbors = getNeighbors(node, dest, closed);
                                 neighbors.sort(
                                                 (a, b) -> a.getName().compareTo(b.getName()));
                                 for (City neighbor : neighbors) {
@@ -123,7 +116,7 @@ public class Search {
                                 success = true;
                                 break;
                         } else {
-                                ArrayList<City> neighbors = getNeighbors(node, dest);
+                                ArrayList<City> neighbors = getNeighbors(node, dest, closed);
                                 neighbors.sort(
                                                 (a, b) -> b.getName().compareTo(a.getName()));
                                 for (City neighbor : neighbors) {
@@ -171,7 +164,7 @@ public class Search {
                                 success = true;
                                 break;
                         } else {
-                                ArrayList<City> neighbors = getNeighbors(node, dest);
+                                ArrayList<City> neighbors = getNeighbors(node, dest, closed);
                                 neighbors.sort(
                                                 (a, b) -> (int) (a.getF() - b.getF()));
                                 for (City neighbor : neighbors) {
@@ -202,11 +195,15 @@ public class Search {
                 return path;
         }
 
-        private static ArrayList<City> getNeighbors(City node, City dest) {
-                ArrayList<City> neighbors = city_graph.get(node);
+        private static ArrayList<City> getNeighbors(City parent, City dest, HashMap<City, City> closed) {
+                ArrayList<City> neighbors = city_graph.get(parent);
+                // System.out.println(parent.getName() + "'s G: " + parent.getG());
                 for (City c : neighbors) {
-                        c.setG(node.getG() + find_distance(node, c));
-                        c.setF(c.getG() + find_distance(c, dest));
+                        if (!closed.containsKey(c)){
+                                c.setG(parent.getG() + find_distance(parent, c));
+                                // System.out.println("Child: " + c.getName() + "'s G : " + c.getG());
+                                c.setF(c.getG() + find_distance(c, dest));
+                        }
                 }
                 return neighbors;
         }
@@ -229,6 +226,10 @@ public class Search {
                         System.err.println("Usage: java Search inputFile outputFile");
                         System.exit(0);
                 }
+
+                // for (City key : city_graph.keySet()){
+                //         System.out.println(key.getName() + ": " + city_graph.get(key));
+                // }
                 
 
                 String start = "";
@@ -250,8 +251,11 @@ public class Search {
                         start = in.next();
                         dest = in.next();
                         ArrayList<City> bfsResult = new ArrayList<>();
+                        double bfsDist = 0;
                         ArrayList<City> dfsResult = new ArrayList<>();
+                        double dfsDist = 0;
                         ArrayList<City> astarResult = new ArrayList<>();
+                        double astarDist = 0;
 
                         if (!cities.containsKey(start)){
                                 System.err.println("No such city: "+start+"");
@@ -261,8 +265,23 @@ public class Search {
                                 System.exit(0);
                         } else {
                                 bfsResult = bfs(cities.get(start), cities.get(dest));
+                                bfsDist = bfsResult.get(bfsResult.size()-1).getG();
+                                for (City c: cities.values()){
+                                        c.setG(0);
+                                        c.setF(0);
+                                }
                                 dfsResult = dfs(cities.get(start), cities.get(dest));
+                                dfsDist = dfsResult.get(dfsResult.size()-1).getG();
+                                for (City c: cities.values()){
+                                        c.setG(0);
+                                        c.setF(0);
+                                }
                                 astarResult = astar(cities.get(start), cities.get(dest));
+                                astarDist = astarResult.get(astarResult.size()-1).getG();
+                                for (City c: cities.values()){
+                                        c.setG(0);
+                                        c.setF(0);
+                                }
                         }
 
                         out.write("Breadth-First Search Results:");
@@ -275,7 +294,37 @@ public class Search {
                         }
                         out.write("That took "+ (bfsResult.size()-1) +" hops to find.");
                         out.newLine();
-                        out.write("Total Distance = " + bfsResult.get(bfsResult.size()-1).getG() + " miles.");
+                        out.write("Total Distance = " + bfsDist + " miles.");
+                        out.newLine();
+                        out.newLine();
+                        out.flush();
+
+                        out.write("Depth-First Search Results:");
+                        out.newLine();
+                        out.flush();
+                        for (City c : dfsResult){
+                                out.write(c.getName());
+                                out.newLine();
+                                out.flush();
+                        }
+                        out.write("That took "+ (dfsResult.size()-1) +" hops to find.");
+                        out.newLine();
+                        out.write("Total Distance = " + dfsDist + " miles.");
+                        out.newLine();
+                        out.newLine();
+                        out.flush();
+
+                        out.write("A* Search Results:");
+                        out.newLine();
+                        out.flush();
+                        for (City c : astarResult){
+                                out.write(c.getName());
+                                out.newLine();
+                                out.flush();
+                        }
+                        out.write("That took "+ (astarResult.size()-1) +" hops to find.");
+                        out.newLine();
+                        out.write("Total Distance = " + astarDist + " miles.");
                         out.newLine();
                         out.flush();
 
