@@ -5,8 +5,8 @@ import java.util.*;
 public class Search {
 
         private static String abs_path;
-        private final static String CITY_FILE = "\\proj01\\city.dat";
-        private final static String EDGE_FILE = "\\proj01\\edge.dat";
+        private final static String CITY_FILE = "./city.dat";
+        private final static String EDGE_FILE = "./edge.dat";
         private static HashMap<City, ArrayList<City>> city_graph;
 
         private static HashMap<String, City> parse_cities(String fn) throws FileNotFoundException {
@@ -209,12 +209,12 @@ public class Search {
         }
 
         public static void main(String[] args) {
-                abs_path = new File(".").getAbsolutePath();
+                // abs_path = new File(".").getAbsolutePath();
                 HashMap<String, City> cities = new HashMap<String, City>();
                 try {
-                        cities = parse_cities(abs_path + CITY_FILE.trim());
+                        cities = parse_cities(CITY_FILE.trim());
                         // System.out.println(cities.values());
-                        city_graph = parse_graph(abs_path + EDGE_FILE.trim(), cities);
+                        city_graph = parse_graph(EDGE_FILE.trim(), cities);
                         // System.out.println(city_graph);
                         // System.out.println(city_graph.get(cities.get("Boston")));
                 } catch (FileNotFoundException e) {
@@ -239,12 +239,12 @@ public class Search {
                         Scanner in;
                         BufferedWriter out;
                         if (!args[0].equals("-")){
-                                in = new Scanner(new File(abs_path + "\\proj01\\" + args[0]));
+                                in = new Scanner(new File(args[0]));
                         } else {
                                 in = new Scanner(System.in);
                         }
                         if (!args[1].equals("-")){
-                                out = new BufferedWriter(new FileWriter((new File(abs_path + "\\proj01\\" + args[1]))));
+                                out = new BufferedWriter(new FileWriter((new File(args[1]))));
                         } else {
                                 out = new BufferedWriter(new OutputStreamWriter(System.out));
                         }
@@ -284,7 +284,8 @@ public class Search {
                                 }
                         }
 
-                        out.write("Breadth-First Search Results:");
+                        out.newLine();
+                        out.write("Breadth-First Search Results: ");
                         out.newLine();
                         out.flush();
                         for (City c : bfsResult){
@@ -294,12 +295,12 @@ public class Search {
                         }
                         out.write("That took "+ (bfsResult.size()-1) +" hops to find.");
                         out.newLine();
-                        out.write("Total Distance = " + bfsDist + " miles.");
+                        out.write(String.format("Total distance = %.0f miles.",bfsDist));
                         out.newLine();
                         out.newLine();
                         out.flush();
-
-                        out.write("Depth-First Search Results:");
+                        out.newLine();
+                        out.write("Depth-First Search Results: ");
                         out.newLine();
                         out.flush();
                         for (City c : dfsResult){
@@ -309,12 +310,12 @@ public class Search {
                         }
                         out.write("That took "+ (dfsResult.size()-1) +" hops to find.");
                         out.newLine();
-                        out.write("Total Distance = " + dfsDist + " miles.");
+                        out.write(String.format("Total distance = %.0f miles.",dfsDist));
                         out.newLine();
                         out.newLine();
                         out.flush();
-
-                        out.write("A* Search Results:");
+                        out.newLine();
+                        out.write("A* Search Results: ");
                         out.newLine();
                         out.flush();
                         for (City c : astarResult){
@@ -324,7 +325,8 @@ public class Search {
                         }
                         out.write("That took "+ (astarResult.size()-1) +" hops to find.");
                         out.newLine();
-                        out.write("Total Distance = " + astarDist + " miles.");
+                        out.write(String.format("Total distance = %.0f miles.",astarDist));
+                        out.newLine();
                         out.newLine();
                         out.flush();
 
