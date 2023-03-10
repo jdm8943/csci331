@@ -8,6 +8,15 @@ public class City {
         private double f;
         private double g;
 
+        /**
+         * Holds information for a city, also acts as node in the city graph
+         * @param name name of city     
+         * @param abbrev abbreviation of a city's state
+         * @param lat lattitude of city
+         * @param lon longitude of city
+         * @param f   evaluation function of city
+         * @param g   cost so far of city
+         */
         public City(String name, String abbrev, double lat, double lon, double f,double g) {
                 this.name = name;
                 this.abbrev = abbrev;

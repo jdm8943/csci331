@@ -8,6 +8,12 @@ public class Search {
         private final static String EDGE_FILE = "edge.dat";
         private static HashMap<City, ArrayList<City>> city_graph;
 
+        /**
+         *  Generates a city hashmap with their locations
+         * @param fn the name of the city file
+         * @return hashmap of city names to their city info
+         * @throws FileNotFoundException
+         */
         private static HashMap<String, City> parse_cities(String fn) throws FileNotFoundException {
                 HashMap<String, City> cities = new HashMap<>();
                 Scanner in = new Scanner(new File(fn));
@@ -25,6 +31,13 @@ public class Search {
                 return cities;
         }
 
+        /**
+         * Generates a graph of city nodes for pathfinding
+         * @param fn name of edge file with route information
+         * @param cities hashmap of cities
+         * @return the generated graph
+         * @throws FileNotFoundException
+         */
         private static HashMap<City, ArrayList<City>> parse_graph(String fn, HashMap<String, City> cities)
                         throws FileNotFoundException {
                 HashMap<City, ArrayList<City>> graph = new HashMap<City, ArrayList<City>>();
@@ -53,6 +66,12 @@ public class Search {
                 return graph;
         }
 
+        /**
+         * Finds the distance in miles between city a and b
+         * @param a first city
+         * @param b second city
+         * @return distance in miles between the two cities
+         */
         private static double find_distance(City a, City b) {
                 double distance = Math.sqrt(
                                 (a.getLat() - b.getLat()) *(a.getLat() - b.getLat()) +
@@ -60,6 +79,12 @@ public class Search {
                 return distance;
         }
 
+        /**
+         * Finds the smallest number of hops using BFS between start and dest
+         * @param start starting city
+         * @param dest destination city
+         * @return the path between start and dest
+         */
         private static ArrayList<City> bfs(City start, City dest) {
                 Queue<City> queue = new LinkedList<City>();
                 HashMap<City, City> closed = new HashMap<City, City>();
@@ -103,6 +128,12 @@ public class Search {
                 return path;
         }
 
+        /**
+         * Finds a possible route between start and dest using DFS
+         * @param start starting city
+         * @param dest destination city
+         * @return generated path between start and dest
+         */
         private static ArrayList<City> dfs(City start, City dest) {
                 Stack<City> stack = new Stack<City>();
                 HashMap<City, City> closed = new HashMap<City, City>();
@@ -146,6 +177,12 @@ public class Search {
                 return path;
         }
 
+        /**
+         * Finds the shortest distance between start and dest using A* search
+         * @param start the starting city
+         * @param dest the destination city
+         * @return generated path between start and dest
+         */
         private static ArrayList<City> astar(City start, City dest) {
                 PriorityQueue<City> open = new PriorityQueue<City>(
                                 new Comparator<City>() {
@@ -194,6 +231,14 @@ public class Search {
                 return path;
         }
 
+        /**
+         * Finds the cities adjacent to the parent city that are not in the closed set,
+         * and calculates their cost-so-far and evaluation function (used in A*)
+         * @param parent the parent city to expand
+         * @param dest the end destination city
+         * @param closed the set of cities already visited by the pathfinder
+         * @return list of possible cities to check in the pathfinder, with updated g and f
+         */
         private static ArrayList<City> getNeighbors(City parent, City dest, HashMap<City, City> closed) {
                 ArrayList<City> neighbors = city_graph.get(parent);
                 // System.out.println(parent.getName() + "'s G: " + parent.getG());
@@ -207,6 +252,11 @@ public class Search {
                 return neighbors;
         }
 
+        /**
+         * Searches through the generated city graph using BFS, DFS, and A*
+         * Outputs the result of each algorihtm into specified file
+         * @param args the input file and output filenames
+         */
         public static void main(String[] args) {
                 // abs_path = new File(".").getAbsolutePath();
                 HashMap<String, City> cities = new HashMap<String, City>();
