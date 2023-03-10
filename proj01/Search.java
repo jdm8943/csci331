@@ -4,9 +4,8 @@ import java.util.*;
 
 public class Search {
 
-        private static String abs_path;
-        private final static String CITY_FILE = "./city.dat";
-        private final static String EDGE_FILE = "./edge.dat";
+        private final static String CITY_FILE = "city.dat";
+        private final static String EDGE_FILE = "edge.dat";
         private static HashMap<City, ArrayList<City>> city_graph;
 
         private static HashMap<String, City> parse_cities(String fn) throws FileNotFoundException {
@@ -213,12 +212,15 @@ public class Search {
                 HashMap<String, City> cities = new HashMap<String, City>();
                 try {
                         cities = parse_cities(CITY_FILE.trim());
-                        // System.out.println(cities.values());
-                        city_graph = parse_graph(EDGE_FILE.trim(), cities);
-                        // System.out.println(city_graph);
-                        // System.out.println(city_graph.get(cities.get("Boston")));
                 } catch (FileNotFoundException e) {
-                        System.err.println(e.getMessage());
+                        System.err.println("File not found: city.dat");
+                        // e.printStackTrace();
+                        System.exit(0);
+                }
+                try {
+                        city_graph = parse_graph(EDGE_FILE.trim(), cities);
+                } catch (FileNotFoundException e) {
+                        System.err.println("File not found: edge.dat");
                         // e.printStackTrace();
                         System.exit(0);
                 }
@@ -239,17 +241,26 @@ public class Search {
                         Scanner in;
                         BufferedWriter out;
                         if (!args[0].equals("-")){
-                                in = new Scanner(new File(args[0]));
+                                try {
+                                        in = new Scanner(new File(args[0]));
+                                        start = in.next();
+                                        dest = in.next();
+                                } catch (FileNotFoundException e) {
+                                        System.err.println("File not found: " + args[0]);
+                                        System.exit(0);
+                                }
+                                
                         } else {
                                 in = new Scanner(System.in);
+                                start = in.next();
+                                dest = in.next();
                         }
                         if (!args[1].equals("-")){
                                 out = new BufferedWriter(new FileWriter((new File(args[1]))));
                         } else {
                                 out = new BufferedWriter(new OutputStreamWriter(System.out));
                         }
-                        start = in.next();
-                        dest = in.next();
+                        
                         ArrayList<City> bfsResult = new ArrayList<>();
                         double bfsDist = 0;
                         ArrayList<City> dfsResult = new ArrayList<>();
@@ -336,19 +347,5 @@ public class Search {
                         // e.printStackTrace();
                 }
 
-                // ArrayList<City> bfsResult = bfs(cities.get("Denver"), cities.get("Boston"));
-                // for (City c : bfsResult) {
-                //         System.out.println(c);
-                // }
-                // System.out.println();
-                // ArrayList<City> dfsResult = dfs(cities.get("Denver"), cities.get("Boston"));
-                // for (City c : dfsResult) {
-                //         System.out.println(c);
-                // }
-                // System.out.println();
-                // ArrayList<City> astarResult = astar(cities.get("Denver"), cities.get("Boston"));
-                // for (City c : astarResult) {
-                //         System.out.println(c);
-                // }
         }
 }
